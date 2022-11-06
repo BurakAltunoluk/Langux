@@ -9,19 +9,21 @@ import AVFoundation
 import CoreData
 
 final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
+    
+    var testet = 0
     var player: AVPlayer?
     var segmentControllerPosition = 0 
     private var dataService = DataService()
-    private var recordingService = RecordingService()
     private var playbackService = PlaybackService()
-    
     var centenceVoices = [Data]()
     var meaning = [String]()
     var datamm = Data()
+    
     var recordingSession: AVAudioSession!
     var audioRecorder: AVAudioRecorder!
     var audioPlayer: AVAudioPlayer!
     
+    @IBOutlet var categoryLabel: UILabel!
     @IBOutlet private var typeSegmentController: UISegmentedControl!
     @IBOutlet private var sharingSegmentController: UISegmentedControl!
     @IBOutlet private var wordInputTextFiled: UITextField!
@@ -29,20 +31,37 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.isUserInteractionEnabled = true
         let gesture = UITapGestureRecognizer(target: self, action: #selector(viewGesture))
         view.addGestureRecognizer(gesture)
+        
         self.typeSegmentController.selectedSegmentIndex = segmentControllerPosition
-        recordingService.startup()
+        startup()
        
     }
     
-    @objc func viewGesture() {
+    @IBAction func categoryButtonPressed(_ sender: UIButton) {
         
-        view.endEditing(true)
-        
+       performSegue(withIdentifier: "toCategoryVC", sender: nil)
         
     }
+    
+    @objc func viewGesture() {
+        view.endEditing(true)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if sendCatagoryData != "0" {
+            
+            self.categoryLabel.text = sendCatagoryData
+            sendCatagoryData = ""
+            
+        }
+    }
+    
     private func textToSpeech(textToSpeech: String) {
         let string = textToSpeech
         let utterance = AVSpeechUtterance(string: string)
@@ -62,6 +81,13 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
 //        recordButton.setTitle("Tap to Record", for: .normal)
     }
 
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toCategoryVC" {
+            let destinationVC = segue.destination as! HastagVC
+            destinationVC.categoryNeedFromAddNewVC = 1
+        }
+        
+    }
     @IBAction private func playButtonPressed(_ sender: UIButton) {
         if audioPlayer == nil {
             startPlayback()
@@ -69,7 +95,7 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
             playbackService.finishPlayback()
         }
     }
-
+ 
     @IBAction private func deleteVoiceButtonPressed(_ sender: UIButton) {
 //        try? FileManager.default.removeItem(at: getDocumentsDirectory().appendingPathComponent("recording.m4a"))
         
@@ -89,10 +115,10 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     }
     
     @IBAction private func cancelButtonPressed(_ sender: UIButton) {
+        recordingSession = nil
         dismiss(animated: true)
     }
 
-    
     @IBAction private func submitButtonPressed(_ sender: UIButton) {
         
         let datam = try? Data(contentsOf: getDocumentsDirectory().appendingPathComponent("recording.m4a"))
@@ -168,8 +194,33 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     // MARK: - Playback
     
     func startPlayback() {
+        
         playbackService.startPlayback(dataver: Data(), isRepeat: true)
        
 }
+    
+    
+    func startup () {
+        
+        recordingSession = AVAudioSession.sharedInstance()
+        
+        do {
+            try recordingSession.setCategory(.playAndRecord, mode: .default)
+            try recordingSession.setActive(true)
+            recordingSession.requestRecordPermission { [unowned self] allowed in
+                
+                DispatchQueue.main.async {
+                    if allowed {
+                        self.loadRecordingUI()
+                    } else {
+                    }
+                }
+            }
+        } catch {
+        }
+    }
+    
+    
+    
 
 }

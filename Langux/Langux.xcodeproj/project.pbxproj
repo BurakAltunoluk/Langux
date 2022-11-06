@@ -13,6 +13,9 @@
 		6002BDE2291129D1000881C4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6002BDE0291129D1000881C4 /* Main.storyboard */; };
 		6002BDE4291129D5000881C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6002BDE3291129D5000881C4 /* Assets.xcassets */; };
 		6002BDE7291129D5000881C4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6002BDE5291129D5000881C4 /* LaunchScreen.storyboard */; };
+		6013F782291830320086DEBA /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6013F781291830320086DEBA /* Reachability.swift */; };
+		6013F784291866B40086DEBA /* HastagVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6013F783291866B40086DEBA /* HastagVC.swift */; };
+		6013F786291867050086DEBA /* HastagCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6013F785291867050086DEBA /* HastagCollectionCell.swift */; };
 		60509EE529133ABE00941894 /* RecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60509EE429133ABE00941894 /* RecordingService.swift */; };
 		606A0910291182A700E6640F /* MainViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606A090F291182A700E6640F /* MainViewCell.swift */; };
 		606A091229119C3400E6640F /* AddNewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606A091129119C3400E6640F /* AddNewVC.swift */; };
@@ -30,6 +33,9 @@
 		6002BDE3291129D5000881C4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6002BDE6291129D5000881C4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6002BDE8291129D5000881C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6013F781291830320086DEBA /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		6013F783291866B40086DEBA /* HastagVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HastagVC.swift; sourceTree = "<group>"; };
+		6013F785291867050086DEBA /* HastagCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HastagCollectionCell.swift; sourceTree = "<group>"; };
 		60509EE429133ABE00941894 /* RecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingService.swift; sourceTree = "<group>"; };
 		606A090F291182A700E6640F /* MainViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewCell.swift; sourceTree = "<group>"; };
 		606A091129119C3400E6640F /* AddNewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewVC.swift; sourceTree = "<group>"; };
@@ -82,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				60DE64CB29153D49000FF4EA /* DataService.swift */,
+				6013F781291830320086DEBA /* Reachability.swift */,
 				60509EE429133ABE00941894 /* RecordingService.swift */,
 				60DE64D32915604A000FF4EA /* PlaybackService.swift */,
 			);
@@ -101,6 +108,7 @@
 		60DE64CF291556BA000FF4EA /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				6013F783291866B40086DEBA /* HastagVC.swift */,
 				6002BDDE291129D1000881C4 /* MainVC.swift */,
 				606A091129119C3400E6640F /* AddNewVC.swift */,
 			);
@@ -120,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				606A090F291182A700E6640F /* MainViewCell.swift */,
+				6013F785291867050086DEBA /* HastagCollectionCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -205,13 +214,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				60DE64CC29153D49000FF4EA /* DataService.swift in Sources */,
+				6013F786291867050086DEBA /* HastagCollectionCell.swift in Sources */,
 				606A09152911CB5400E6640F /* TestModel.xcdatamodeld in Sources */,
 				6002BDDF291129D1000881C4 /* MainVC.swift in Sources */,
 				60DE64D42915604A000FF4EA /* PlaybackService.swift in Sources */,
 				606A091229119C3400E6640F /* AddNewVC.swift in Sources */,
+				6013F784291866B40086DEBA /* HastagVC.swift in Sources */,
 				606A0910291182A700E6640F /* MainViewCell.swift in Sources */,
 				6002BDDB291129D1000881C4 /* AppDelegate.swift in Sources */,
 				6002BDDD291129D1000881C4 /* SceneDelegate.swift in Sources */,
+				6013F782291830320086DEBA /* Reachability.swift in Sources */,
 				60509EE529133ABE00941894 /* RecordingService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

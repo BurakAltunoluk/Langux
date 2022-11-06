@@ -16,9 +16,10 @@ final class MainVC: UIViewController, AVAudioPlayerDelegate {
     private var dataService = DataService()
     private var audioPlayer: AVAudioPlayer!
     
-    var wordSound = [Data]()
+    private var wordSound = [Data]()
     private var sentenceSound = [Data]()
     private var filterArray = [String]()
+    private var category = [String]()
     
     @IBOutlet var searchButtonOutlet: UIButton!
     @IBOutlet var folderButtonOutled: UIButton!
@@ -65,10 +66,10 @@ final class MainVC: UIViewController, AVAudioPlayerDelegate {
             self.tableView.reloadData()
         }
     }
-    
+
     @IBAction private func myFolderButtonPressed(_ sender: UIButton) {
         
-       playSound()
+        playBackService.speechToTextGoogle(language: "tr", someText: "aman allahIm")
         
     }
     

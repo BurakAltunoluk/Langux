@@ -9,7 +9,10 @@ import Foundation
 import CoreData
 import UIKit
 
+var sendCatagoryData = ""
 struct DataService {
+    
+   
     
     enum entityNames: String {
         case Sentences
