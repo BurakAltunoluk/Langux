@@ -9,6 +9,7 @@ import UIKit
 
 class HastagCollectionCell: UICollectionViewCell {
     
+    @IBOutlet var trashIcon: UIImageView!
     @IBOutlet var hastagLabel: UILabel!
     
     

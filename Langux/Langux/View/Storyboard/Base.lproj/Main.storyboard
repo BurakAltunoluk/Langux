@@ -64,16 +64,27 @@
                                                     <color key="textColor" red="0.22745099660000001" green="0.22745099660000001" blue="0.22745099660000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="trash.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ZQ1-UQ-HZL">
+                                                    <rect key="frame" x="164" y="8" width="37" height="32"/>
+                                                    <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="37" id="FeQ-a8-6EX"/>
+                                                        <constraint firstAttribute="height" constant="31.5" id="Zoo-d8-3Sn"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="ZQ1-UQ-HZL" firstAttribute="top" secondItem="sac-wj-8Nw" secondAttribute="top" constant="9" id="Zrr-CZ-Nx4"/>
                                                 <constraint firstItem="N3d-kI-qgm" firstAttribute="centerX" secondItem="sac-wj-8Nw" secondAttribute="centerX" id="aT0-LB-b6n"/>
                                                 <constraint firstItem="N3d-kI-qgm" firstAttribute="centerY" secondItem="sac-wj-8Nw" secondAttribute="centerY" id="kkK-Yc-Xz5"/>
+                                                <constraint firstAttribute="trailing" secondItem="ZQ1-UQ-HZL" secondAttribute="trailing" constant="8" id="krm-ZF-z3z"/>
                                             </constraints>
                                         </collectionViewCellContentView>
                                         <color key="backgroundColor" red="0.92689055200000003" green="0.7699739337" blue="0.26649737359999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <size key="customSize" width="209" height="192"/>
                                         <connections>
                                             <outlet property="hastagLabel" destination="N3d-kI-qgm" id="um2-yd-fU6"/>
+                                            <outlet property="trashIcon" destination="ZQ1-UQ-HZL" id="E0E-je-ORK"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -82,11 +93,28 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="uJr-JL-v8C"/>
                                 </connections>
                             </collectionView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LJZ-j4-AsO">
+                                <rect key="frame" x="337" y="69.5" width="67" height="35"/>
+                                <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="0R2-AN-QbG"/>
+                                    <constraint firstAttribute="width" constant="67" id="fHY-gF-jDy"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="gray" title=" ">
+                                    <imageReference key="image" image="trash" catalog="system" symbolScale="large"/>
+                                    <color key="baseForegroundColor" systemColor="systemYellowColor"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="deleteHastagButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Yuh-Bt-tFP"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="0.28042882283528647" green="0.28042882283528647" blue="0.28042882283528647" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="yny-uz-g66" firstAttribute="top" secondItem="dE1-qk-Ydv" secondAttribute="bottom" constant="50" id="1Yz-pg-986"/>
+                            <constraint firstItem="LJZ-j4-AsO" firstAttribute="centerY" secondItem="dE1-qk-Ydv" secondAttribute="centerY" id="8jf-KU-iSc"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="dE1-qk-Ydv" secondAttribute="trailing" constant="10" id="BfL-aZ-8Wg"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="yny-uz-g66" secondAttribute="bottom" constant="130" id="EdP-zK-pTR"/>
                             <constraint firstItem="yny-uz-g66" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" constant="-10" id="ML7-3g-9i3"/>
@@ -94,6 +122,7 @@
                             <constraint firstItem="dE1-qk-Ydv" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="15" id="SUB-1x-EgF"/>
                             <constraint firstItem="25M-nC-uri" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="VGg-4u-Ujw"/>
                             <constraint firstItem="dE1-qk-Ydv" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="aZH-a0-gxl"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="LJZ-j4-AsO" secondAttribute="trailing" constant="10" id="lGp-45-k3b"/>
                             <constraint firstItem="25M-nC-uri" firstAttribute="centerY" secondItem="dE1-qk-Ydv" secondAttribute="centerY" id="o5O-dr-Vil"/>
                         </constraints>
                     </view>
@@ -101,12 +130,13 @@
                     <connections>
                         <outlet property="addCategory" destination="25M-nC-uri" id="Tgd-YG-uVD"/>
                         <outlet property="collectionView" destination="yny-uz-g66" id="iAV-9i-4jm"/>
+                        <outlet property="trashButtonOutlet" destination="LJZ-j4-AsO" id="fGZ-Qu-mAy"/>
                         <segue destination="vI4-Z9-Ncm" kind="presentation" identifier="toMain" modalPresentationStyle="fullScreen" id="WdQ-Ba-fnI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-317" y="-478"/>
+            <point key="canvasLocation" x="-317.39130434782612" y="-478.125"/>
         </scene>
         <!--Main-->
         <scene sceneID="ogC-NJ-iGk">
@@ -545,6 +575,7 @@
         <image name="play.fill" catalog="system" width="116" height="128"/>
         <image name="plus" catalog="system" width="128" height="113"/>
         <image name="plus.app" catalog="system" width="128" height="114"/>
+        <image name="trash" catalog="system" width="121" height="128"/>
         <image name="trash.fill" catalog="system" width="121" height="128"/>
         <image name="volume.2" catalog="system" width="128" height="90"/>
         <systemColor name="systemOrangeColor">

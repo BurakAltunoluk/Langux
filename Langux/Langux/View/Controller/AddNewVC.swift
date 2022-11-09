@@ -10,16 +10,17 @@ import CoreData
 
 final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     
-    var testet = 0
+//
     var player: AVPlayer?
     var segmentControllerPosition = 0 
     private var dataService = DataService()
     private var playbackService = PlaybackService()
-    var centenceVoices = [Data]()
-    var meaning = [String]()
-    var datamm = Data()
+    private var centenceVoices = [Data]()
+    private var meaning = [String]()
+    private var datamm = Data()
     
     var recordingSession: AVAudioSession!
+    
     var audioRecorder: AVAudioRecorder!
     var audioPlayer: AVAudioPlayer!
     
@@ -35,10 +36,22 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
         view.isUserInteractionEnabled = true
         let gesture = UITapGestureRecognizer(target: self, action: #selector(viewGesture))
         view.addGestureRecognizer(gesture)
-        
+    
         self.typeSegmentController.selectedSegmentIndex = segmentControllerPosition
         startup()
        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    
+        
+        
+        if sendCatagoryData != "0" {
+            self.categoryLabel.text = sendCatagoryData
+            sendCatagoryData = ""
+            
+        }
     }
     
     @IBAction func categoryButtonPressed(_ sender: UIButton) {
@@ -51,16 +64,7 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
         view.endEditing(true)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        if sendCatagoryData != "0" {
-            
-            self.categoryLabel.text = sendCatagoryData
-            sendCatagoryData = ""
-            
-        }
-    }
+
     
     private func textToSpeech(textToSpeech: String) {
         let string = textToSpeech
@@ -115,6 +119,10 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     }
     
     @IBAction private func cancelButtonPressed(_ sender: UIButton) {
+        do {try recordingSession.setActive(false)} catch {
+            
+        }
+        audioRecorder = nil
         recordingSession = nil
         dismiss(animated: true)
     }
@@ -179,7 +187,7 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     func finishRecording(success: Bool) {
         audioRecorder.stop()
         audioRecorder = nil
-        
+        recordingSession = nil 
         if success {
 //            recordButton.setTitle("Tap to Re-record", for: .normal)
 //            playButton.setTitle("Play Your Recording", for: .normal)
@@ -198,7 +206,6 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
         playbackService.startPlayback(dataver: Data(), isRepeat: true)
        
 }
-    
     
     func startup () {
         

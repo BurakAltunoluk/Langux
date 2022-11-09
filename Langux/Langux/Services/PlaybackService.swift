@@ -44,7 +44,7 @@ struct PlaybackService {
                 
                 audioPlayer.play()
                 
-                audioPlayer.volume = 100.0
+                audioPlayer.volume = 10.0
                
             } catch {
            

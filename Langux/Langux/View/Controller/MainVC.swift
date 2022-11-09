@@ -8,18 +8,26 @@
 import UIKit
 import AVFoundation
 import CoreData
+import MediaPlayer
 
 final class MainVC: UIViewController, AVAudioPlayerDelegate {
-    var player: AVPlayer?
-    var textString = "i am ok. How are you my mate"
+    
+    var choosedHastag = ""
+    var testString = "hadi canim sende"
+    private var player: AVPlayer?
     private var playBackService = PlaybackService()
     private var dataService = DataService()
     private var audioPlayer: AVAudioPlayer!
+    private var recordingSession = AVAudioSession.sharedInstance()
     
+    private var sentenceList = [String]()
+    private var wordList = [String]()
     private var wordSound = [Data]()
     private var sentenceSound = [Data]()
-    private var filterArray = [String]()
     private var category = [String]()
+    
+    private var filterArray = [String]()
+   
     
     @IBOutlet var searchButtonOutlet: UIButton!
     @IBOutlet var folderButtonOutled: UIButton!
@@ -32,17 +40,26 @@ final class MainVC: UIViewController, AVAudioPlayerDelegate {
         
         getWordData()
         self.prepareUI ()
+       
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-       
+     
         if segmentController.selectedSegmentIndex == 0 {
             getWordData()
             self.tableView.reloadData()
         } else { getSentenceData()
             self.tableView.reloadData()
         }
+        
+        do {
+            try recordingSession.setCategory(.playback , mode: .default)
+            try recordingSession.setActive(true)
+            
+        } catch {
+        }
+        
     }
     
     private func getWordData() {
@@ -112,7 +129,7 @@ final class MainVC: UIViewController, AVAudioPlayerDelegate {
     
     func playSound() {
         
-        let adana = textString.replacingOccurrences(of: " ", with: "%20")
+        let adana = testString.replacingOccurrences(of: " ", with: "%20")
         print(adana)
         let url = "https://translate.google.com/translate_tts?ie=UTF-8&q=\(adana)&tl=en&total=1&idx=0&textlen=15&tk=350535.255567&client=webapp&prev=input"
         

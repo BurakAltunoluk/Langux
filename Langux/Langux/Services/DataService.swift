@@ -10,6 +10,7 @@ import CoreData
 import UIKit
 
 var sendCatagoryData = ""
+
 struct DataService {
     
    
