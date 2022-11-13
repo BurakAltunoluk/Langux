@@ -12,7 +12,7 @@ class HastagVC: UIViewController {
     
     
     var deleteHastag = false
-    
+    var rowNumber = 0
     @IBOutlet var trashButtonOutlet: UIButton!
     
     @IBOutlet var addCategory: UIButton!
@@ -33,7 +33,7 @@ class HastagVC: UIViewController {
     
     
     @IBAction func deleteHastagButtonPressed(_ sender: UIButton) {
-       
+        self.addCategory.isEnabled.toggle()
         self.deleteHastag.toggle()
        
         self.collectionView.reloadData()
@@ -91,12 +91,15 @@ class HastagVC: UIViewController {
         
        addNewProduct()
         
-        
-       
-        
-        
-  
-        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toMain" {
+            
+            let MainVC = segue.destination as! MainVC
+            MainVC.choosedHastag = categoryHastag[rowNumber]
+            
+        }
     }
     
 }
@@ -136,6 +139,8 @@ extension HastagVC: UICollectionViewDelegateFlowLayout {
 extension HastagVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     
+  
+        
         
         if deleteHastag == true {
             
@@ -153,11 +158,11 @@ extension HastagVC: UICollectionViewDelegate {
         if self.categoryNeedFromAddNewVC == 1 {
            
             sendCatagoryData = self.categoryHastag[indexPath.row]
-            
+            dismiss(animated: true)
         
             
         } else {
-           
+            self.rowNumber = indexPath.row
             performSegue(withIdentifier: "toMain", sender: nil)
         }
         

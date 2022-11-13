@@ -9,89 +9,50 @@ import AVFoundation
 import CoreData
 
 final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
-    
-//
-    var player: AVPlayer?
-    var segmentControllerPosition = 0 
+    var segmentControllerPosition = 0
+    private var recordingSession: AVAudioSession!
+    private var audioRecorder: AVAudioRecorder!
+    private var audioPlayer: AVAudioPlayer!
+    private var player: AVPlayer?
     private var dataService = DataService()
     private var playbackService = PlaybackService()
+    @IBOutlet private var recButtonOutlet: UIButton!
+    @IBOutlet private var playButtonOutlet: UIButton!
+    @IBOutlet private var wordOrSentenceLabel: UILabel!
+    
     private var centenceVoices = [Data]()
     private var meaning = [String]()
     private var datamm = Data()
     
-    var recordingSession: AVAudioSession!
-    
-    var audioRecorder: AVAudioRecorder!
-    var audioPlayer: AVAudioPlayer!
-    
-    @IBOutlet var categoryLabel: UILabel!
+    @IBOutlet private var categoryLabel: UILabel!
     @IBOutlet private var typeSegmentController: UISegmentedControl!
     @IBOutlet private var sharingSegmentController: UISegmentedControl!
     @IBOutlet private var wordInputTextFiled: UITextField!
     @IBOutlet private var meanningInputTextField: UITextField!
     
+    // MARK: Life Cycile
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewGestureSetup()
         
-        view.isUserInteractionEnabled = true
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(viewGesture))
-        view.addGestureRecognizer(gesture)
-    
-        self.typeSegmentController.selectedSegmentIndex = segmentControllerPosition
-        startup()
-       
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-    
-        
-        
-        if sendCatagoryData != "0" {
-            self.categoryLabel.text = sendCatagoryData
-            sendCatagoryData = ""
-            
-        }
+        prepareStart()
     }
     
-    @IBAction func categoryButtonPressed(_ sender: UIButton) {
-        
+    // MARK: Buttons
+    
+    @IBAction private func categoryButtonPressed(_ sender: UIButton) {
        performSegue(withIdentifier: "toCategoryVC", sender: nil)
-        
-    }
-    
-    @objc func viewGesture() {
-        view.endEditing(true)
-    }
-    
-
-    
-    private func textToSpeech(textToSpeech: String) {
-        let string = textToSpeech
-        let utterance = AVSpeechUtterance(string: string)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-GB")
-        let synth = AVSpeechSynthesizer()
-        synth.speak(utterance)
     }
 
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-    
-        return paths[0]
+    @IBAction private func segmentControllerChanged(_ sender: UISegmentedControl) {
+        let categories = ["Word?","Sentence?"]
+        wordOrSentenceLabel.text = categories[typeSegmentController.selectedSegmentIndex]
     }
     
-    func loadRecordingUI() {
-//        recordButton.isHidden = false
-//        recordButton.setTitle("Tap to Record", for: .normal)
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "toCategoryVC" {
-            let destinationVC = segue.destination as! HastagVC
-            destinationVC.categoryNeedFromAddNewVC = 1
-        }
-        
-    }
     @IBAction private func playButtonPressed(_ sender: UIButton) {
         if audioPlayer == nil {
             startPlayback()
@@ -99,7 +60,7 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
             playbackService.finishPlayback()
         }
     }
- 
+    
     @IBAction private func deleteVoiceButtonPressed(_ sender: UIButton) {
 //        try? FileManager.default.removeItem(at: getDocumentsDirectory().appendingPathComponent("recording.m4a"))
         
@@ -119,14 +80,13 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     }
     
     @IBAction private func cancelButtonPressed(_ sender: UIButton) {
-        do {try recordingSession.setActive(false)} catch {
-            
-        }
+       
         audioRecorder = nil
         recordingSession = nil
         dismiss(animated: true)
     }
-
+    
+    
     @IBAction private func submitButtonPressed(_ sender: UIButton) {
         
         let datam = try? Data(contentsOf: getDocumentsDirectory().appendingPathComponent("recording.m4a"))
@@ -135,33 +95,87 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
             
         dataService.setData(forKey: .words, Value: self.wordInputTextFiled.text!, EntityName: .Words)
             
-            if datam != nil {
-                dataService.setData(forKey: .wordsSound, Value: datam!, EntityName: .Words)
+        dataService.setData(forKey: .wordsSound, Value: datam!, EntityName: .Words)
         
-            } else { dataService.setData(forKey: .wordsSound, Value: Data(), EntityName: .Words)}
+        dataService.setData(forKey: .meaningWord, Value: self.meanningInputTextField.text!, EntityName: .Words)
+          
+        dataService.setData(forKey: .hastagWord, Value: self.categoryLabel.text! , EntityName: .Words)
             
             
         } else if typeSegmentController.selectedSegmentIndex == 1 {
             
-            dataService.setData(forKey: .sentences, Value: self.wordInputTextFiled.text!, EntityName: .Sentences)
-            if datam != nil {
-                dataService.setData(forKey: .sentencesSound, Value: datam!, EntityName: .Sentences)
+        dataService.setData(forKey: .sentences, Value: self.wordInputTextFiled.text!, EntityName: .Sentences)
+            
+        dataService.setData(forKey: .sentencesSound, Value: datam!, EntityName: .Sentences)
+            
+        dataService.setData(forKey: .meaningSentence, Value: self.meanningInputTextField.text!, EntityName: .Sentences)
                 
-            } else { dataService.setData(forKey: .sentencesSound, Value: Data(), EntityName: .Sentences)}
+        dataService.setData(forKey: .hastagSentence, Value: self.categoryLabel.text!, EntityName: .Sentences)
+            
         }
         dismiss(animated: true)
     }
     
     
-    // MARK: - Recording
-
+    
     @IBAction private func recButtonPressed(_ sender: UIButton) {
+        
+        if self.recButtonOutlet.titleLabel!.text == "●" {
+        self.recButtonOutlet.setTitle("Ⅱ", for: .normal)
+       
+        } else {
+            self.recButtonOutlet.setTitle("●", for: .normal)
+            self.playButtonOutlet.isEnabled = true
+        }
+       
         if audioRecorder == nil {
             startRecording()
         } else {
             finishRecording(success: true)
         }
     }
+    
+
+    // MARK: Functions
+    
+    
+    private func textToSpeech(textToSpeech: String) {
+        let string = textToSpeech
+        let utterance = AVSpeechUtterance(string: string)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-GB")
+        let synth = AVSpeechSynthesizer()
+        synth.speak(utterance)
+    }
+
+    private func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+    
+    @objc private func viewGesture() {
+        view.endEditing(true)
+    }
+
+     private func viewGestureSetup() {
+        view.isUserInteractionEnabled = true
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(viewGesture))
+        view.addGestureRecognizer(gesture)
+    }
+    
+     private func loadRecordingUI() {
+//        recordButton.isHidden = false
+//        recordButton.setTitle("Tap to Record", for: .normal)
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toCategoryVC" {
+            let destinationVC = segue.destination as! HastagVC
+            destinationVC.categoryNeedFromAddNewVC = 1
+        }
+        
+    }
+    
+    // MARK: - Recording
     
     func startRecording() {
         let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.m4a")
@@ -207,8 +221,15 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
        
 }
     
-    func startup () {
+    func prepareStart () {
         
+            self.recButtonOutlet.setTitle("●", for: .normal)
+            if sendCatagoryData != "0" {
+                self.categoryLabel.text = sendCatagoryData
+                sendCatagoryData = ""
+                
+            }
+        self.typeSegmentController.selectedSegmentIndex = segmentControllerPosition
         recordingSession = AVAudioSession.sharedInstance()
         
         do {

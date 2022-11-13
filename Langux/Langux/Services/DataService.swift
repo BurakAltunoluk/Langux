@@ -13,27 +13,35 @@ var sendCatagoryData = ""
 
 struct DataService {
     
-   
-    
     enum entityNames: String {
         case Sentences
         case Words
     }
    
     enum forKey: String {
-        case sentences
+        
         case words
+        case meaningWord
         case wordsSound
+        case hastagWord
+        
+        case sentences
+        case hastagSentence
+        case meaningSentence
         case sentencesSound
     }
     
-    func getWordData(wordsList: @escaping([String]) ->(), wordsSoundList: @escaping([Data]) ->()) {
+    func getWordData(wordsList: @escaping([String]) ->(), wordsSoundList: @escaping([Data]) ->(), hastagWordList: @escaping([String]) ->(), meaningWordList: @escaping([String]) ->()) {
+        
          var wordArray = [String]()
          var wordsSound = [Data]()
-        
+         var hastagWordArray = [String]()
+         var meaningWordArray = [String]()
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        
         let context = appDelegate.persistentContainer.viewContext
+        
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Words")
          fetchRequest.returnsObjectsAsFaults = false
          
@@ -47,10 +55,23 @@ struct DataService {
                          wordArray.append(name as! String)
                          wordsList(wordArray)
              }
-                     if let wordMeaning = result.value(forKey: "wordsSound")  {
-                         wordsSound.append(wordMeaning as! Data)
+                     if let wordSound = result.value(forKey: "wordsSound")  {
+                         wordsSound.append(wordSound as! Data)
                          wordsSoundList(wordsSound)
                      }
+                    
+                     if let wordMeaning = result.value(forKey: "meaningWord")  {
+                         meaningWordArray.append(wordMeaning as! String)
+                         
+                         meaningWordList(meaningWordArray)
+                     }
+                     
+                     if let hastagWord = result.value(forKey: "hastagWord")  {
+                         hastagWordArray.append(hastagWord as! String)
+                         hastagWordList(hastagWordArray)
+                     }
+                     
+                     
                  }
              }
          } catch {
@@ -58,11 +79,11 @@ struct DataService {
          }
      }
      
-    
-   
-    func getSentenceData(sentencesList: @escaping([String]) ->(), sentencesSoundList: @escaping([Data]) ->()) {
+    func getSentenceData(sentencesList: @escaping([String]) ->(), sentencesSoundList: @escaping([Data]) ->(), sentencesHastagList: @escaping([String]) ->(), sentencesMeaningList: @escaping([String]) ->()) {
         
         var sentenceArray = [String]()
+        var sentenceHastagArray = [String]()
+        var sentenceMeaningArray = [String]()
         var sentencesSound = [Data]()
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -83,7 +104,18 @@ struct DataService {
                        sentencesSound.append(wordMeaning as! Data)
                       sentencesSoundList(sentencesSound)
                         
-                    }
+            }
+                    if let sentenceHastag = result.value(forKey: "hastagSentence")  {
+                        sentenceHastagArray.append(sentenceHastag as! String)
+                        sentencesHastagList(sentenceHastagArray)
+            }
+                    
+                    if let sentenceMeaning = result.value(forKey: "hastagSentence")  {
+                        sentenceMeaningArray.append(sentenceMeaning as! String)
+                        sentencesMeaningList(sentenceArray)
+            }
+                    
+                    
                 }
             }
         } catch {

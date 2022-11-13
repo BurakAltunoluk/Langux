@@ -164,9 +164,10 @@
                                     <action selector="segmentControllerChanged:" destination="vI4-Z9-Ncm" eventType="valueChanged" id="cTd-Cb-0rD"/>
                                 </connections>
                             </segmentedControl>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="WML-hB-f1u">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="WML-hB-f1u">
                                 <rect key="frame" x="15" y="186" width="384" height="610"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="separatorColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="mainCell" rowHeight="115" id="W9O-wz-ha6" customClass="MainViewCell" customModule="Langux" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="44.5" width="384" height="115"/>
@@ -369,7 +370,7 @@
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Nay-aX-hBp">
                                 <rect key="frame" x="30" y="377" width="354" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no"/>
                             </textField>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="vdS-iP-tXO">
                                 <rect key="frame" x="30" y="145" width="354" height="32"/>
@@ -379,8 +380,11 @@
                                     <segment title="Sentence"/>
                                 </segments>
                                 <color key="selectedSegmentTintColor" systemColor="systemYellowColor"/>
+                                <connections>
+                                    <action selector="segmentControllerChanged:" destination="GXG-He-inT" eventType="valueChanged" id="lHw-pm-NFh"/>
+                                </connections>
                             </segmentedControl>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EE1-9X-32B">
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EE1-9X-32B">
                                 <rect key="frame" x="324" y="297" width="60" height="35"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -404,7 +408,6 @@
                                 </constraints>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="gray" title=" ">
-                                    <imageReference key="image" image="circle.fill" catalog="system" symbolScale="small"/>
                                     <color key="baseForegroundColor" red="0.79269034465154009" green="0.2616751533728725" blue="0.21071546643377204" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </buttonConfiguration>
                                 <connections>
@@ -476,7 +479,7 @@
                                 </constraints>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="gray" title=" ">
-                                    <imageReference key="image" image="trash.fill" catalog="system" symbolScale="medium"/>
+                                    <imageReference key="image" image="volume.2" catalog="system" symbolScale="medium"/>
                                     <color key="baseForegroundColor" systemColor="systemYellowColor"/>
                                 </buttonConfiguration>
                                 <connections>
@@ -554,20 +557,22 @@
                     <connections>
                         <outlet property="categoryLabel" destination="DxI-9J-ky5" id="YYa-gl-eC9"/>
                         <outlet property="meanningInputTextField" destination="Nay-aX-hBp" id="HTG-GX-HG4"/>
+                        <outlet property="playButtonOutlet" destination="EE1-9X-32B" id="Q26-tw-0jG"/>
+                        <outlet property="recButtonOutlet" destination="aCw-X3-sLB" id="62u-9X-3xV"/>
                         <outlet property="sharingSegmentController" destination="aHc-J3-IJC" id="4AY-g7-kvo"/>
                         <outlet property="typeSegmentController" destination="vdS-iP-tXO" id="pBh-hY-KoL"/>
                         <outlet property="wordInputTextFiled" destination="BGg-6C-V7L" id="0tq-fh-Wcz"/>
+                        <outlet property="wordOrSentenceLabel" destination="Pgv-hE-xiL" id="gdu-ly-kyX"/>
                         <segue destination="BYZ-38-t0r" kind="presentation" identifier="toCategoryVC" modalPresentationStyle="fullScreen" id="J05-LV-SRX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fN2-ZP-eTp" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1483" y="-478"/>
+            <point key="canvasLocation" x="1548" y="-478"/>
         </scene>
     </scenes>
     <resources>
         <image name="applepencil" catalog="system" width="128" height="113"/>
-        <image name="circle.fill" catalog="system" width="128" height="121"/>
         <image name="folder.fill" catalog="system" width="128" height="97"/>
         <image name="house" catalog="system" width="128" height="106"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>

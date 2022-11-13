@@ -87,8 +87,8 @@
 		60DE64CD2915566B000FF4EA /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				60DE64CB29153D49000FF4EA /* DataService.swift */,
 				6013F781291830320086DEBA /* Reachability.swift */,
+				60DE64CB29153D49000FF4EA /* DataService.swift */,
 				60509EE429133ABE00941894 /* RecordingService.swift */,
 				60DE64D32915604A000FF4EA /* PlaybackService.swift */,
 			);
