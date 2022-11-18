@@ -31,12 +31,13 @@ struct DataService {
         case sentencesSound
     }
     
-    func getWordData(wordsList: @escaping([String]) ->(), wordsSoundList: @escaping([Data]) ->(), hastagWordList: @escaping([String]) ->(), meaningWordList: @escaping([String]) ->()) {
+    func getWordData(wordID: @escaping([UUID]) ->(),wordsList: @escaping([String]) ->(), wordsSoundList: @escaping([Data]) ->(), hastagWordList: @escaping([String]) ->(), meaningWordList: @escaping([String]) ->()) {
         
          var wordArray = [String]()
          var wordsSound = [Data]()
          var hastagWordArray = [String]()
          var meaningWordArray = [String]()
+         var wordId = [UUID]()
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
@@ -50,23 +51,32 @@ struct DataService {
              if results.count > 0 {
                  for result in results as! [NSManagedObject] {
                      
-                     if let name = result.value(forKey: "words")  {
+                     
+                     if let id = result.value(forKey: "id")  {
+                         
+                         wordId.append(id as! UUID)
+                         wordID(wordId)
+                         
+             }
+                     
+                     
+                     if let name = result.value(forKey: "word")  {
                          
                          wordArray.append(name as! String)
                          wordsList(wordArray)
              }
-                     if let wordSound = result.value(forKey: "wordsSound")  {
+                     if let wordSound = result.value(forKey: "voice")  {
                          wordsSound.append(wordSound as! Data)
                          wordsSoundList(wordsSound)
                      }
                     
-                     if let wordMeaning = result.value(forKey: "meaningWord")  {
+                     if let wordMeaning = result.value(forKey: "meaning")  {
                          meaningWordArray.append(wordMeaning as! String)
                          
                          meaningWordList(meaningWordArray)
                      }
                      
-                     if let hastagWord = result.value(forKey: "hastagWord")  {
+                     if let hastagWord = result.value(forKey: "hastag")  {
                          hastagWordArray.append(hastagWord as! String)
                          hastagWordList(hastagWordArray)
                      }
@@ -79,8 +89,9 @@ struct DataService {
          }
      }
      
-    func getSentenceData(sentencesList: @escaping([String]) ->(), sentencesSoundList: @escaping([Data]) ->(), sentencesHastagList: @escaping([String]) ->(), sentencesMeaningList: @escaping([String]) ->()) {
+    func getSentenceData(sentencesID: @escaping([UUID]) ->(), sentencesList: @escaping([String]) ->(), sentencesSoundList: @escaping([Data]) ->(), sentencesHastagList: @escaping([String]) ->(), sentencesMeaningList: @escaping([String]) ->()) {
         
+        var sentenceId = [UUID]()
         var sentenceArray = [String]()
         var sentenceHastagArray = [String]()
         var sentenceMeaningArray = [String]()
@@ -89,6 +100,7 @@ struct DataService {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Sentences")
+        
         fetchRequest.returnsObjectsAsFaults = false
         
         do {
@@ -96,21 +108,27 @@ struct DataService {
             if results.count > 0 {
                 for result in results as! [NSManagedObject] {
                     
-                    if let name = result.value(forKey: "sentences")  {
+                    if let id = result.value(forKey: "id")  {
+                        sentenceId.append(id as! UUID)
+                        sentencesID(sentenceId)
+            }
+                    
+                    if let name = result.value(forKey: "word")  {
                         sentenceArray.append(name as! String)
                         sentencesList(sentenceArray)
             }
-                    if let wordMeaning = result.value(forKey: "sentencesSound")  {
+                    
+                    if let wordMeaning = result.value(forKey: "voice")  {
                        sentencesSound.append(wordMeaning as! Data)
                       sentencesSoundList(sentencesSound)
                         
             }
-                    if let sentenceHastag = result.value(forKey: "hastagSentence")  {
+                    if let sentenceHastag = result.value(forKey: "hastag")  {
                         sentenceHastagArray.append(sentenceHastag as! String)
                         sentencesHastagList(sentenceHastagArray)
             }
                     
-                    if let sentenceMeaning = result.value(forKey: "hastagSentence")  {
+                    if let sentenceMeaning = result.value(forKey: "meaning")  {
                         sentenceMeaningArray.append(sentenceMeaning as! String)
                         sentencesMeaningList(sentenceArray)
             }
@@ -123,42 +141,48 @@ struct DataService {
         }
     }
 
-    func setData(forKey: forKey, Value: Any, EntityName: entityNames) {
+    func setData(hastag: String, voiceData:Data, meaning:String, wordSentence: String, EntityName: String) {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        
         let context = appDelegate.persistentContainer.viewContext
+        let newRecord = NSEntityDescription.insertNewObject(forEntityName: EntityName, into: context)
         
-        let newRecord = NSEntityDescription.insertNewObject(forEntityName: EntityName.rawValue, into: context)
-        
-        newRecord.setValue(Value, forKey: forKey.rawValue)
+        newRecord.setValue(UUID(), forKey: "id")
+        newRecord.setValue(wordSentence, forKey: "word")
+        newRecord.setValue(meaning, forKey: "meaning")
+        newRecord.setValue(voiceData, forKey: "voice")
+        newRecord.setValue(hastag, forKey: "hastag")
         
         do{
             try context.save()
         } catch {
+            print("error SetData")
         }
-       
     }
     
-    func deleteSoundData(dataArray: [Data], entityName: entityNames, object: forKey, rowNumber: Int) {
+    
+    
+    
+    func deleteData(choosedID: UUID, entityName: String) {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName.rawValue)
-        
-        let wordVoice = dataArray[rowNumber]
-        fetchRequest.predicate = NSPredicate(format: "\(object) = %@", wordVoice as CVarArg)
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        fetchRequest.predicate = NSPredicate(format: "id = %@", choosedID.uuidString)
         fetchRequest.returnsObjectsAsFaults = false
         
         do {
+            
         let results = try context.fetch(fetchRequest)
+            
             if results.count > 0 {
 
                 for result in results as! [NSManagedObject] {
 
-                    if let id = result.value(forKey: object.rawValue) as? Data {
-
-                        if id == dataArray[rowNumber] {
+                    if let id = result.value(forKey: "id") as? UUID {
+                       
+                   if id == choosedID {
+                            
                             context.delete(result)
 
                             do {
@@ -167,53 +191,15 @@ struct DataService {
                             } catch {
                                 print("error")
                             }
-
-                            break
-                        }
+//
+                          break
                     }
+                }
+                        
                 }
             }
         } catch {
             print("error")
         }
     }
-    
-    func deleteStringData(filterArray: [String], entityName: entityNames, object: forKey, rowNumber: Int ) {
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let context = appDelegate.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName.rawValue)
-        
-        let wordVoice = filterArray[rowNumber]
-        fetchRequest.predicate = NSPredicate(format: "\(object) = %@", wordVoice as String)
-        fetchRequest.returnsObjectsAsFaults = false
-        
-        do {
-        let results = try context.fetch(fetchRequest)
-            if results.count > 0 {
-
-                for result in results as! [NSManagedObject] {
-
-                    if let id = result.value(forKey: object.rawValue) as? String {
-
-                        if id == filterArray[rowNumber] {
-                            context.delete(result)
-
-                            do {
-                                try context.save()
-
-                            } catch {
-                                print("error")
-                            }
-
-                            break
-                        }
-                    }
-                }
-            }
-        } catch {
-            print("error")
-        }
-    }
-    
 }

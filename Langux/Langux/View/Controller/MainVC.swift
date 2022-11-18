@@ -13,36 +13,40 @@ import MediaPlayer
 final class MainVC: UIViewController, AVAudioPlayerDelegate {
     
     var choosedHastag = ""
-    
-    var testString = ""
-
+ 
     private var player: AVPlayer?
     private var playBackService = PlaybackService()
     private var dataService = DataService()
     private var audioPlayer: AVAudioPlayer!
     private var recordingSession = AVAudioSession.sharedInstance()
     
+    // ---------------
     private var wordSound = [Data]()
     private var wordList = [String]()
     private var hastagWord = [String]()
     private var meaningWord = [String]()
+    private var wordID = [UUID]()
     
     private var sentenceSound = [Data]()
     private var sentenceList = [String]()
     private var hastagSentence = [String]()
     private var meaningSentence = [String]()
+    private var sentenceID = [UUID]()
     
     private var filterArray = [String]()
     private var filterSound = [Data]()
     private var filterMeaning = [String]()
     private var filterHastag = [String]()
-
-    @IBOutlet var searchButtonOutlet: UIButton!
-    @IBOutlet var folderButtonOutled: UIButton!
-    @IBOutlet var AddNewButtonOutlet: UIButton!
-    @IBOutlet private var tableView: UITableView!
-    @IBOutlet private var segmentController: UISegmentedControl!
+    private var filterID = [UUID]()
+    //----------------
     
+    @IBOutlet private var segmentController: UISegmentedControl!
+    @IBOutlet private var searchButtonOutlet: UIButton!
+    @IBOutlet private var folderButtonOutled: UIButton!
+    @IBOutlet private var AddNewButtonOutlet: UIButton!
+    @IBOutlet private var tableView: UITableView!
+   
+// MARK: Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.prepareUI ()
@@ -50,12 +54,7 @@ final class MainVC: UIViewController, AVAudioPlayerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if segmentController.selectedSegmentIndex == 0 {
-            getWordData()
-            self.tableView.reloadData()
-        } else { getSentenceData()
-            self.tableView.reloadData()
-        }
+        self.prepareDataDependHastag()
         
         do {
             try recordingSession.setCategory(.playback , mode: .default)
@@ -65,147 +64,160 @@ final class MainVC: UIViewController, AVAudioPlayerDelegate {
         }
     }
     
-    func prepareAccordingHastag() {
-        
-        var count = -1
-        
+    
+// MARK: Functions
+    private func resetTableViewData() {
         self.filterArray = []
         self.filterMeaning = []
         self.filterSound = []
         self.filterHastag = []
+        self.filterID = []
+    }
+    
+    private func prepareDataDependHastag() {
         
-        for i in self.hastagWord {
-            count += 1
+        resetTableViewData()
+        
+        if segmentController.selectedSegmentIndex == 0 {
             
-            if segmentController.selectedSegmentIndex == 0 {
-                
-            if self.choosedHastag == "#all" {
-                filterArray.append(wordList[count])
-                filterSound.append(wordSound[count])
-                filterMeaning.append(meaningWord[count])
-                filterHastag.append(hastagWord[count])
+            self.wordSound = []
+            self.wordList = []
+            self.hastagWord = []
+            self.meaningWord = []
+            self.wordID = []
+            
+            self.getWordData()
+            
+            if choosedHastag == "#all" {
+                self.filterID = self.wordID
+                self.filterArray = self.wordList
+                self.filterMeaning = self.meaningWord
+                self.filterSound = self.wordSound
+                self.filterHastag = self.hastagWord
                 self.tableView.reloadData()
+            } else {
+             
+                var rowNumber = -1
                 
-            } else if i == self.choosedHastag {
-                
-                filterArray.append(wordList[count])
-                filterSound.append(wordSound[count])
-                filterMeaning.append(meaningWord[count])
-                filterHastag.append(hastagWord[count])
-                self.tableView.reloadData()
-                
-            }
-                
-            } else if segmentController.selectedSegmentIndex == 1 {
-              
-                if self.choosedHastag == "#all" {
-                    filterArray.append(sentenceList[count])
-                    filterSound.append(sentenceSound[count])
-                    filterMeaning.append(meaningSentence[count])
-                    filterHastag.append(hastagSentence[count])
-                
+                for i in hastagWord {
                     
-                } else if i == self.choosedHastag {
+                    rowNumber += 1
                     
-                    filterArray.append(sentenceList[count])
-                    filterSound.append(sentenceSound[count])
-                    filterMeaning.append(meaningSentence[count])
-                    filterHastag.append(hastagSentence[count])
-                    
-                    
+                    if i == self.choosedHastag {
+                        self.filterID.append(wordID[rowNumber])
+                        self.filterArray.append(wordList[rowNumber])
+                        self.filterHastag.append(hastagWord[rowNumber])
+                        self.filterMeaning.append(meaningWord[rowNumber])
+                        self.filterSound.append(wordSound[rowNumber])
+                    }
                 }
+                self.tableView.reloadData()
             }
             
+            
+        } else {
+            
+            sentenceSound = []
+            sentenceList = []
+            hastagSentence = []
+            meaningSentence = []
+            sentenceID = []
+            self.getSentenceData()
+     
+            if choosedHastag == "#all" {
+                self.filterID = self.sentenceID
+                self.filterArray = self.sentenceList
+                self.filterMeaning = self.meaningSentence
+                self.filterSound = self.sentenceSound
+                self.filterHastag = self.hastagSentence
+                
+            } else {
+             
+              
+                var rowNumber = -1
+                for i in hastagSentence {
+                    rowNumber += 1
+                    if i == self.choosedHastag {
+                        self.filterID.append(sentenceID[rowNumber])
+                        self.filterArray.append(sentenceList[rowNumber])
+                        self.filterMeaning.append(meaningSentence[rowNumber])
+                        self.filterSound.append(sentenceSound[rowNumber])
+                        self.filterHastag.append(hastagSentence[rowNumber])
+                    }
+                }
+                
+            }
             self.tableView.reloadData()
         }
     }
     
     private func getWordData() {
         
-        self.filterSound = []
-        self.filterHastag = []
-        self.filterMeaning = []
-        self.filterArray = []
-      
-        dataService.getWordData { wordList in
-            self.wordList = wordList
-        } wordsSoundList: { wordSoundList in
-            self.wordSound = wordSoundList
-        } hastagWordList: { hastagWordList in
-            self.hastagWord = hastagWordList
-        } meaningWordList: { meaningWordList in
-            self.meaningWord = meaningWordList
-        }
-        prepareAccordingHastag()
+        resetTableViewData()
         
+        dataService.getWordData { wordIDList in
+            self.wordID = wordIDList
+            print("\(wordIDList) wordId list yeni")
+            
+        } wordsList: { wordList in
+            self.wordList = wordList
+        } wordsSoundList: { voiceList in
+            self.wordSound = voiceList
+        } hastagWordList: { hastagList in
+            self.hastagWord = hastagList
+        } meaningWordList: { wordMeaning in
+            self.meaningWord = wordMeaning
+        }
+    
+    
     }
     
     private func getSentenceData() {
         
-        self.filterArray = []
-        self.filterSound = []
-        self.filterHastag = []
-        self.filterMeaning = []
+   resetTableViewData()
         
-       
-//        self.tableView.tag = 2
-        
-        dataService.getSentenceData { sentenceList in
+        dataService.getSentenceData { sentenceIDList in
+            self.sentenceID = sentenceIDList
+        } sentencesList: { sentenceList in
             self.sentenceList = sentenceList
-        } sentencesSoundList: { sentenceSound in
-            self.sentenceSound = sentenceSound
-        } sentencesHastagList: { sentenceHastag in
-            self.hastagSentence = sentenceHastag
-        } sentencesMeaningList: { sentenceMeaning in
-            self.meaningSentence = sentenceMeaning
-            
+        } sentencesSoundList: { voiceDataList in
+            self.sentenceSound = voiceDataList
+        } sentencesHastagList: { sentenceHastagList in
+            self.hastagSentence = sentenceHastagList
+        } sentencesMeaningList: { sentenceMeaningList in
+            self.meaningSentence = sentenceMeaningList
         }
-        
-     prepareAccordingHastag()
         
     }
 
+// MARK: Buttons
+    
     @IBAction private func myFolderButtonPressed(_ sender: UIButton) {
        dismiss(animated: true)
     }
     
     @IBAction private func addNewButtonPressed(_ sender: UIButton) {
         performSegue(withIdentifier: "toAddNew", sender: nil)
+        sendCatagoryData = choosedHastag
     }
-    
     
     @IBAction func segmentControllerChanged(_ sender: UISegmentedControl) {
-        
-        switch segmentController.selectedSegmentIndex {
-        case 0:
-            
-            self.filterArray = []
-            
-            self.tableView.reloadData()
-          
-            getWordData()
-            
-        case 1 :
-            
-            self.filterArray = []
-            
-            self.tableView.reloadData()
-          
-            getSentenceData()
-            
-           
-        default:
-            break
-        }
+        prepareDataDependHastag()
     }
+    
     private func prepareUI () {
-        self.tableView.layer.cornerRadius = 10
+        
         self.AddNewButtonOutlet.setTitle("", for: .normal)
+        self.searchButtonOutlet.setTitle("", for: .normal)
+        self.folderButtonOutled.setTitle("", for: .normal)
+        self.searchButtonOutlet.setTitle("", for: .normal)
         self.folderButtonOutled.layer.cornerRadius = 10
         self.AddNewButtonOutlet.layer.cornerRadius = 10
         self.searchButtonOutlet.layer.cornerRadius = 10
-        self.folderButtonOutled.setTitle("", for: .normal)
-        self.searchButtonOutlet.setTitle("", for: .normal)
+    
+        self.tableView.layer.cornerRadius = 10
+       
+      
     }
   
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -214,30 +226,15 @@ final class MainVC: UIViewController, AVAudioPlayerDelegate {
             destinationVC.segmentControllerPosition = self.segmentController.selectedSegmentIndex
         }
     }
-    
-    func playSound() {
-        
-        let adana = testString.replacingOccurrences(of: " ", with: "%20")
-        print(adana)
-        let url = "https://translate.google.com/translate_tts?ie=UTF-8&q=\(adana)&tl=en&total=1&idx=0&textlen=15&tk=350535.255567&client=webapp&prev=input"
-        
-        guard let url1 = URL.init(string: url)
-                        else {
-                            return
-                    }
-        
-                    let playerItem = AVPlayerItem.init(url: url1)
-                    player = AVPlayer.init(playerItem: playerItem)
-                player?.play()
-        }
-    
 }
+
+// MARK: Tableview
 
 extension MainVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       print(filterHastag)
-        return self.filterHastag.count
+       
+        return self.filterArray.count
         
     }
     
@@ -246,7 +243,6 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "mainCell", for: indexPath) as! MainViewCell
         
         cell.playButtonOOutlet.tag = indexPath.row
-        
         
         cell.labelView.text = self.filterArray[indexPath.row]
         return cell
@@ -266,39 +262,22 @@ extension MainVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
+        let entityNamem =  segmentController.selectedSegmentIndex != 0 ? "Sentences" : "Words"
+        
+        print("---------------------------")
+        print("neyi silem \(entityNamem)")
+        print(self.filterID)
+        print("neyi silem \(self.filterID[indexPath.row])")
+        print("neyi silem \(self.filterHastag[indexPath.row])")
+        print("---------------------------")
+        
         if editingStyle == .delete {
             
-            if segmentController.selectedSegmentIndex == 0 {
-                
-                dataService.deleteStringData(filterArray: self.filterArray, entityName: .Words, object: .words, rowNumber: indexPath.row)
-                
-                dataService.deleteSoundData(dataArray: self.filterSound, entityName: .Words, object: .wordsSound, rowNumber: indexPath.row)
-                
-                dataService.deleteStringData(filterArray: self.filterMeaning, entityName: .Words, object: .meaningWord, rowNumber: indexPath.row)
-                
-                dataService.deleteStringData(filterArray: self.filterHastag, entityName: .Words, object: .hastagWord, rowNumber: indexPath.row)
-                
-                self.filterSound.remove(at: indexPath.row)
-                self.filterHastag.remove(at: indexPath.row)
-                self.filterMeaning.remove(at: indexPath.row)
-                self.filterArray.remove(at: indexPath.row)
-                self.tableView.reloadData()
-                
-            } else {
-                
-                dataService.deleteStringData(filterArray: self.filterArray, entityName: .Sentences, object: .sentences, rowNumber: indexPath.row)
-                
-                dataService.deleteSoundData(dataArray: self.filterSound, entityName: .Sentences, object: .sentencesSound, rowNumber: indexPath.row)
-                
-                dataService.deleteStringData(filterArray: self.filterMeaning, entityName: .Sentences, object: .meaningSentence, rowNumber: indexPath.row)
-                
-                dataService.deleteStringData(filterArray: self.filterHastag, entityName: .Sentences, object: .hastagSentence, rowNumber: indexPath.row)
-                
-                
-                self.tableView.reloadData()
-            }
+            
+        dataService.deleteData(choosedID: self.filterID[indexPath.row], entityName: entityNamem)
+            
+        self.prepareDataDependHastag()
+            
         }
-        
     }
-    
 }

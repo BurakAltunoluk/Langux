@@ -109,6 +109,12 @@
                                     <action selector="deleteHastagButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Yuh-Bt-tFP"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="have a funday" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MMr-sY-uB2">
+                                <rect key="frame" x="0.0" y="831.5" width="414" height="30.5"/>
+                                <fontDescription key="fontDescription" name="SnellRoundhand-Bold" family="Snell Roundhand" pointSize="24"/>
+                                <color key="textColor" red="0.92128556969999997" green="0.71355402040000004" blue="0.080494401100000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="0.28042882283528647" green="0.28042882283528647" blue="0.28042882283528647" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
@@ -120,9 +126,12 @@
                             <constraint firstItem="yny-uz-g66" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" constant="-10" id="ML7-3g-9i3"/>
                             <constraint firstItem="yny-uz-g66" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="RiM-BJ-lHa"/>
                             <constraint firstItem="dE1-qk-Ydv" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="15" id="SUB-1x-EgF"/>
+                            <constraint firstItem="MMr-sY-uB2" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="U8G-l7-8YE"/>
                             <constraint firstItem="25M-nC-uri" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="VGg-4u-Ujw"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="MMr-sY-uB2" secondAttribute="trailing" id="ZWb-UN-WFP"/>
                             <constraint firstItem="dE1-qk-Ydv" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="aZH-a0-gxl"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="LJZ-j4-AsO" secondAttribute="trailing" constant="10" id="lGp-45-k3b"/>
+                            <constraint firstItem="MMr-sY-uB2" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="mTp-Qd-7gA"/>
                             <constraint firstItem="25M-nC-uri" firstAttribute="centerY" secondItem="dE1-qk-Ydv" secondAttribute="centerY" id="o5O-dr-Vil"/>
                         </constraints>
                     </view>
@@ -370,7 +379,7 @@
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Nay-aX-hBp">
                                 <rect key="frame" x="30" y="377" width="354" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="no"/>
                             </textField>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="vdS-iP-tXO">
                                 <rect key="frame" x="30" y="145" width="354" height="32"/>

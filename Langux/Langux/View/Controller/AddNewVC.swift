@@ -10,12 +10,13 @@ import CoreData
 
 final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     var segmentControllerPosition = 0
+    private var dataService = DataService()
+    private var playbackService = PlaybackService()
+    
     private var recordingSession: AVAudioSession!
     private var audioRecorder: AVAudioRecorder!
     private var audioPlayer: AVAudioPlayer!
     private var player: AVPlayer?
-    private var dataService = DataService()
-    private var playbackService = PlaybackService()
     @IBOutlet private var recButtonOutlet: UIButton!
     @IBOutlet private var playButtonOutlet: UIButton!
     @IBOutlet private var wordOrSentenceLabel: UILabel!
@@ -34,7 +35,6 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewGestureSetup()
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -54,6 +54,11 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     }
     
     @IBAction private func playButtonPressed(_ sender: UIButton) {
+        
+        
+     preparePlayback()
+        
+        
         if audioPlayer == nil {
             startPlayback()
         } else {
@@ -63,7 +68,7 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
     
     @IBAction private func deleteVoiceButtonPressed(_ sender: UIButton) {
 //        try? FileManager.default.removeItem(at: getDocumentsDirectory().appendingPathComponent("recording.m4a"))
-        
+        preparePlayback()
         let adana = wordInputTextFiled.text!.replacingOccurrences(of: " ", with: "%20")
         print(adana)
         let url = "https://translate.google.com/translate_tts?ie=UTF-8&q=\(adana)&tl=en&total=1&idx=0&textlen=15&tk=350535.255567&client=webapp&prev=input"
@@ -91,41 +96,27 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
         
         let datam = try? Data(contentsOf: getDocumentsDirectory().appendingPathComponent("recording.m4a"))
         
-        if typeSegmentController.selectedSegmentIndex == 0 {
-            
-        dataService.setData(forKey: .words, Value: self.wordInputTextFiled.text!, EntityName: .Words)
-            
-        dataService.setData(forKey: .wordsSound, Value: datam!, EntityName: .Words)
+        let entityName1 =  typeSegmentController.selectedSegmentIndex == 0 ? "Words" : "Sentences"
         
-        dataService.setData(forKey: .meaningWord, Value: self.meanningInputTextField.text!, EntityName: .Words)
-          
-        dataService.setData(forKey: .hastagWord, Value: self.categoryLabel.text! , EntityName: .Words)
-            
-            
-        } else if typeSegmentController.selectedSegmentIndex == 1 {
-            
-        dataService.setData(forKey: .sentences, Value: self.wordInputTextFiled.text!, EntityName: .Sentences)
-            
-        dataService.setData(forKey: .sentencesSound, Value: datam!, EntityName: .Sentences)
-            
-        dataService.setData(forKey: .meaningSentence, Value: self.meanningInputTextField.text!, EntityName: .Sentences)
-                
-        dataService.setData(forKey: .hastagSentence, Value: self.categoryLabel.text!, EntityName: .Sentences)
-            
-        }
+        dataService.setData(hastag: categoryLabel.text!, voiceData: datam!, meaning: meanningInputTextField.text!, wordSentence: wordInputTextFiled.text!, EntityName: entityName1)
+        
         dismiss(animated: true)
+    
     }
     
-    
-    
     @IBAction private func recButtonPressed(_ sender: UIButton) {
+       
+        prepareRec()
         
         if self.recButtonOutlet.titleLabel!.text == "●" {
         self.recButtonOutlet.setTitle("Ⅱ", for: .normal)
+        recButtonOutlet.layer.borderColor = UIColor.red.cgColor
+        recButtonOutlet.layer.borderWidth = 2
        
         } else {
             self.recButtonOutlet.setTitle("●", for: .normal)
             self.playButtonOutlet.isEnabled = true
+            recButtonOutlet.layer.borderWidth = 0
         }
        
         if audioRecorder == nil {
@@ -225,16 +216,26 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
         
             self.recButtonOutlet.setTitle("●", for: .normal)
             if sendCatagoryData != "0" {
-                self.categoryLabel.text = sendCatagoryData
-                sendCatagoryData = ""
-                
+            self.categoryLabel.text = sendCatagoryData
+            sendCatagoryData = ""
             }
-        self.typeSegmentController.selectedSegmentIndex = segmentControllerPosition
-        recordingSession = AVAudioSession.sharedInstance()
         
+        self.typeSegmentController.selectedSegmentIndex = segmentControllerPosition
+        if segmentControllerPosition == 1 {
+        self.wordOrSentenceLabel.text = "Sentence?"
+            
+        }
+        
+   
+    }
+    
+    func prepareRec () {
+        
+        recordingSession = AVAudioSession.sharedInstance()
         do {
             try recordingSession.setCategory(.playAndRecord, mode: .default)
             try recordingSession.setActive(true)
+            
             recordingSession.requestRecordPermission { [unowned self] allowed in
                 
                 DispatchQueue.main.async {
@@ -246,9 +247,18 @@ final class AddNewVC: UIViewController, AVAudioRecorderDelegate {
             }
         } catch {
         }
+        
     }
-    
-    
-    
+ 
+    func preparePlayback() {
+        recordingSession = AVAudioSession.sharedInstance()
+        do {
+            try recordingSession.setCategory(.playback, mode: .default)
+            try recordingSession.setActive(false)
+            
+        } catch {
+        }
+        
+    }
 
 }

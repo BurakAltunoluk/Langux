@@ -8,47 +8,72 @@
 import UIKit
 import AudioToolbox
 
-class HastagVC: UIViewController {
+final class HastagVC: UIViewController {
     
-    
-    var deleteHastag = false
-    var rowNumber = 0
-    @IBOutlet var trashButtonOutlet: UIButton!
-    
-    @IBOutlet var addCategory: UIButton!
+    // MARK: Properties
     var categoryNeedFromAddNewVC = 0
+    private var deleteHastag = false
+    private var rowNumber = 0
+    @IBOutlet private var trashButtonOutlet: UIButton!
+    @IBOutlet private var addCategory: UIButton!
+    private var categoryHastag = [String]()
+    @IBOutlet private var collectionView: UICollectionView!
     
-    var categoryHastag = [String]()
     
-    @IBOutlet var collectionView: UICollectionView!
-    
+// MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         addCategory.layer.cornerRadius = 10
+        trashButtonOutlet.layer.cornerRadius = 10
         addCategory.setTitle("", for: .normal)
         trashButtonOutlet.setTitle("", for: .normal)
-    }
-  
-
-    
-    
-    @IBAction func deleteHastagButtonPressed(_ sender: UIButton) {
-        self.addCategory.isEnabled.toggle()
-        self.deleteHastag.toggle()
-       
-        self.collectionView.reloadData()
+        
+        if UserDefaults.standard.object(forKey: "hastag") == nil {
+            print("deneme")
+                self.categoryHastag.append("#all")
+                UserDefaults.standard.set(self.categoryHastag, forKey: "hastag")
+            }
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        getHastagData()
+       
+    }
+
+// MARK: Buttons
+    
+    @IBAction func deleteHastagButtonPressed(_ sender: UIButton) {
+        self.addCategory.isEnabled.toggle()
+        if addCategory.isEnabled == true {
+            trashButtonOutlet.layer.borderWidth = 0
+        } else {
+            trashButtonOutlet.layer.borderColor = UIColor.red.cgColor
+            trashButtonOutlet.layer.borderWidth = 4
+        }
+       
+       
+        self.deleteHastag.toggle()
+        self.collectionView.reloadData()
+    }
+    
+    @IBAction func addCategory(_ sender: UIButton) {
+       addNewProduct()
+    }
+    
+    
+    
+// MARK: Functions
+    func getHastagData() {
         if UserDefaults.standard.object(forKey: "hastag") is [String] {
-            
             categoryHastag = UserDefaults.standard.object(forKey: "hastag") as! [String]
             self.collectionView.reloadData()
         }
-       
     }
+    
+    
     func addNewProduct(){
       
      var newHastag = ""
@@ -80,18 +105,13 @@ class HastagVC: UIViewController {
       }
      
       let cancelButton = UIAlertAction(title: "Cancel", style: .cancel)
-     
       menu.addAction(saveButton)
       menu.addAction(cancelButton)
       present(menu, animated: true)
        
   }
     
-    @IBAction func addCategory(_ sender: UIButton) {
-        
-       addNewProduct()
-        
-    }
+ 
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toMain" {
@@ -112,11 +132,18 @@ extension HastagVC: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let Cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HastagCell", for: indexPath) as! HastagCollectionCell
-        if deleteHastag == true {
+        if deleteHastag == true{
+        
+        if indexPath.row != 0 {
+              
         Cell.layer.borderColor = UIColor.red.cgColor
         Cell.layer.borderWidth = 4
         Cell.trashIcon.isHidden = false
+           
+            }
+            
         } else {
+            
             Cell.layer.borderColor = UIColor.clear.cgColor
             Cell.layer.borderWidth = 0
             Cell.trashIcon.isHidden = true
@@ -147,11 +174,20 @@ extension HastagVC: UICollectionViewDelegate {
             if indexPath.row > 0 {
             self.categoryHastag.remove(at: indexPath.row)
             UserDefaults.standard.set(self.categoryHastag, forKey: "hastag")
+            deleteHastag = false
+            self.collectionView.reloadData()
+                
             } else {
+            
                 AudioServicesPlayAlertSound(1521)
+                deleteHastag = false
+                self.collectionView.reloadData()
+              
             }
             
             self.collectionView.reloadData()
+            self.addCategory.isEnabled.toggle()
+            trashButtonOutlet.layer.borderWidth = 0
         } else {
         
         

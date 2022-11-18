@@ -8,6 +8,7 @@
 import Foundation
 import CoreData
 import AVFoundation
+import UIKit
 
 class RecordingService1 {
     
@@ -38,8 +39,8 @@ class RecordingService1 {
             audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
             audioRecorder.delegate = delegate.self
             audioRecorder.record()
-            
            // recordButton.setTitle("Tap to Stop", for: .normal)
+            
         } catch {
             finishRecording(success: false)
         }
@@ -60,5 +61,4 @@ class RecordingService1 {
             // recording failed :(
         }
     }
-
 }
