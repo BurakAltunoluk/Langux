@@ -14,6 +14,8 @@ final class HastagVC: UIViewController {
     var categoryNeedFromAddNewVC = 0
     private var deleteHastag = false
     private var rowNumber = 0
+    
+    @IBOutlet var menuOutlet: UIButton!
     @IBOutlet private var trashButtonOutlet: UIButton!
     @IBOutlet private var addCategory: UIButton!
     private var categoryHastag = [String]()
@@ -23,30 +25,34 @@ final class HastagVC: UIViewController {
 // MARK: Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        menuOutlet.layer.cornerRadius = 10
         addCategory.layer.cornerRadius = 10
         trashButtonOutlet.layer.cornerRadius = 10
+        menuOutlet.setTitle("", for: .normal)
         addCategory.setTitle("", for: .normal)
         trashButtonOutlet.setTitle("", for: .normal)
         
         if UserDefaults.standard.object(forKey: "hastag") == nil {
-            print("deneme")
                 self.categoryHastag.append("#all")
                 UserDefaults.standard.set(self.categoryHastag, forKey: "hastag")
             }
-        
-    }
+         }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        self.collectionView.layer.cornerRadius = 10
         getHastagData()
        
     }
 
 // MARK: Buttons
     
+    @IBAction func menuButtonPressed(_ sender: UIButton) {
+        performSegue(withIdentifier: "toMenu", sender: nil)
+    }
     @IBAction func deleteHastagButtonPressed(_ sender: UIButton) {
         self.addCategory.isEnabled.toggle()
+        self.menuOutlet.isEnabled.toggle()
         if addCategory.isEnabled == true {
             trashButtonOutlet.layer.borderWidth = 0
         } else {
@@ -84,11 +90,10 @@ final class HastagVC: UIViewController {
       }
       
       
-      let saveButton = UIAlertAction(title: "Save", style: .default) { data in
+        let saveButton = UIAlertAction(title: "Add", style: .cancel) { data in
           let firstTextField = menu.textFields![0] as UITextField
     
           newHastag = firstTextField.text ?? ""
-          print(firstTextField.text ?? "")
           
           if newHastag != "" {
               self.categoryHastag.append("#\(newHastag)")
@@ -104,14 +109,12 @@ final class HastagVC: UIViewController {
      
       }
      
-      let cancelButton = UIAlertAction(title: "Cancel", style: .cancel)
+        let cancelButton = UIAlertAction(title: "Cancel", style: .default)
       menu.addAction(saveButton)
       menu.addAction(cancelButton)
       present(menu, animated: true)
        
   }
-    
- 
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toMain" {
@@ -120,6 +123,13 @@ final class HastagVC: UIViewController {
             MainVC.choosedHastag = categoryHastag[rowNumber]
             
         }
+    }
+    override var shouldAutorotate: Bool {
+        return false
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
     }
     
 }
@@ -158,7 +168,7 @@ extension HastagVC: UICollectionViewDataSource {
 extension HastagVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let screenWitdh = UIScreen.main.bounds.width
-        return CGSize(width: screenWitdh / 2 - 15, height: screenWitdh / 2 - 15)
+        return CGSize(width: screenWitdh / 2 - 16, height: screenWitdh / 2 - 16)
     }
 }
 
@@ -174,6 +184,7 @@ extension HastagVC: UICollectionViewDelegate {
             if indexPath.row > 0 {
             self.categoryHastag.remove(at: indexPath.row)
             UserDefaults.standard.set(self.categoryHastag, forKey: "hastag")
+            self.menuOutlet.isEnabled.toggle()
             deleteHastag = false
             self.collectionView.reloadData()
                 
@@ -205,7 +216,7 @@ extension HastagVC: UICollectionViewDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
            
         }
-    }
-    }
+     }
+  }
    
 }

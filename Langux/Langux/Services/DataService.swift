@@ -11,6 +11,13 @@ import UIKit
 
 var sendCatagoryData = ""
 
+var editID = UUID()
+var editSentenceOrWord = ""
+var editMeaning = ""
+var editHastag = ""
+var editData = Data()
+
+
 struct DataService {
     
     enum entityNames: String {
@@ -130,7 +137,7 @@ struct DataService {
                     
                     if let sentenceMeaning = result.value(forKey: "meaning")  {
                         sentenceMeaningArray.append(sentenceMeaning as! String)
-                        sentencesMeaningList(sentenceArray)
+                        sentencesMeaningList(sentenceMeaningArray)
             }
                     
                     
@@ -141,13 +148,13 @@ struct DataService {
         }
     }
 
-    func setData(hastag: String, voiceData:Data, meaning:String, wordSentence: String, EntityName: String) {
+    func setData(id: UUID, hastag: String, voiceData:Data, meaning:String, wordSentence: String, EntityName: String) {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let newRecord = NSEntityDescription.insertNewObject(forEntityName: EntityName, into: context)
         
-        newRecord.setValue(UUID(), forKey: "id")
+        newRecord.setValue(id, forKey: "id")
         newRecord.setValue(wordSentence, forKey: "word")
         newRecord.setValue(meaning, forKey: "meaning")
         newRecord.setValue(voiceData, forKey: "voice")
